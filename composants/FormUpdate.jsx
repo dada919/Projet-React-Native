@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View , Button , TextInput , FlatList } from 'react-native'
 import React , {useState , useEffect} from 'react'
-import { schemaEtudiant } from "../joi/etudiant"
+import { schemaEtudiant } from "../verif/connexion"
 import db from "../config"
 import {  getDoc, updateDoc , doc  } from "firebase/firestore"
 

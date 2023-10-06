@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
-import { schemaEtudiant } from '../joi/etudiant.js';
+import { schemaEtudiant } from '../verif/connexion.js';
 import db from '../config';
 import { collection, addDoc } from 'firebase/firestore';
 

@@ -1,7 +1,39 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, FlatList } from 'react-native';
+import { useAuth } from '../context/authContext';
+import { useState, useEffect } from 'react';
+import { deleteDoc , doc , getDocs, collection } from "firebase/firestore"
+import db from "../config"
 
-const Profil = () => {
+const Dashboard = ({navigation}) => {
+  const { accountEmail } = useAuth();
+  const { accountRole } = useAuth();
+  const { isLoggedIn } = useAuth();
+
+  const [produits, setProduits] = useState([]);
+
+  useEffect( function(){ 
+
+    getDocs(collection(db, "oeuvre"))
+    .then(function(snapShot){
+      const data = [];
+      snapShot.docs.map(function(doc){
+        data.push({...doc.data() , id : doc.id})
+      })
+      setProduits(data);
+    })
+
+} , [])
+
+if (!isLoggedIn) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.notLoggedInText}>Vous devez vous connecter</Text>
+      <Button title='Se connecter' onPress={() => navigation.navigate('connexion')}/>
+    </View>
+  );
+}
+
   return (
     <View>
         <View style={styles.container}>
@@ -13,35 +45,31 @@ const Profil = () => {
                 style={styles.profileImage}
                 />
                 <View style={styles.zoneGaucheNom}>
-                <Text style={styles.h2}>David Borg</Text>
-                <Text style={styles.h3}>Title: Flying wings</Text>
-                </View>
-            </View>
-            <View style={styles.zoneGaucheBottom}>
-                <View style={styles.zoneGaucheSocial}>
-                <Text style={styles.number}>2222</Text>
-                <Text style={styles.text}>Lorem.</Text>
-                </View>
-                <View style={styles.zoneGaucheSocial}>
-                <Text style={styles.number}>2222</Text>
-                <Text style={styles.text}>Lorem.</Text>
-                </View>
-                <View style={styles.zoneGaucheSocial}>
-                <Text style={styles.number}>2222</Text>
-                <Text style={styles.text}>Lorem.</Text>
+                <Text style={styles.h2}>{accountEmail}</Text>
+                <Text style={styles.h3}>Role: {accountRole}</Text>
                 </View>
             </View>
             </View>
             <View style={styles.zoneDroite}>
                 <Text style={styles.h1}>...</Text>
-                <View style={styles.zoneDroiteMiddle}>
-                    <Text style={styles.number}>1</Text>
-                    <Text style={styles.text}>Ranking</Text>
-                </View>
             </View>
         </View>
-        </View>
-    </View>
+      </View>
+      <FlatList 
+        data={produits}
+        renderItem={function({item}){
+        return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
+        <Button onPress={function(){
+          navigation.navigate("formupdate" , {id : item.id })
+        }} color="orange" title="modif"/>
+        <Button onPress={function(){  
+          supprimer(item.id)
+        }} color="red" title="supr"/>
+        <Text>nom: {item.nom} - âge: {item.description}</Text>
+      </View>
+      }}
+      />
+  </View>
   );
 };
 
@@ -53,7 +81,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 350,
-    height: 150,
+    height: 110,
     backgroundColor: '#3f7ecc',
     padding: 20,
     borderRadius: 15,
@@ -120,6 +148,11 @@ const styles = StyleSheet.create({
     lineHeight: 25,
     marginBottom: 15,
   },
+  notLoggedInText: {
+    marginBottom: 30,
+    fontSize: 20,
+    color: "red",
+  },
 });
 
-export default Profil;
+export default Dashboard;
