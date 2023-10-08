@@ -5,10 +5,10 @@ import db from '../config';
 import { collection, addDoc } from 'firebase/firestore';
 
 
-function FormCreate({ navigation }) {
+function FormCreateAccount({ navigation }) {
   const [nom, setNom] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  const [age, setAge] = useState("");
+  const [email, setEmail] = useState("");
   const [erreurs, setErreurs] = useState([]);
 
 
@@ -20,9 +20,9 @@ function FormCreate({ navigation }) {
       if(!error) {
         addDoc(collection(db, "etudiant"), etudiant).then(function(reponse){
             setNom("")
-            setDescription("")
-            setImage("")
-            alert("Le produit à bien été ajouté dans la base de données")
+            setAge("")
+            setEmail("")
+            alert("le profil à bien été crée dans la base de données")
         })
       }
       else {
@@ -34,7 +34,7 @@ function FormCreate({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Ajout d'un produit</Text>
+        <Text style={styles.title}>Création d'un compte</Text>
         <Text style={styles.title2}>Nom:</Text>
         <TextInput
           style={styles.input}
@@ -44,26 +44,26 @@ function FormCreate({ navigation }) {
           autoCapitalize="none"
           autoCorrect={false}
         />
-        <Text style={styles.title2}>Desciption:</Text>
+        <Text style={styles.title2}>Age:</Text>
         <TextInput
           style={styles.input}
-          value={description}
-          onChangeText={(text) => setDescription(text)}
-          placeholder="Description"
+          value={age}
+          onChangeText={(text) => setAge(text)}
+          placeholder="Age"
           autoCapitalize="none"
           autoCorrect={false}
         />
-         <Text style={styles.title2}>Lien de l'image:</Text>
+         <Text style={styles.title2}>Email:</Text>
         <TextInput
           style={styles.input}
-          value={image}
-          onChangeText={(text) => setImage(text)}
-          placeholder="Image"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          placeholder="Email"
           autoCapitalize="none"
           autoCorrect={false}
         />
         <View style={styles.button}></View>
-        <Button title='Ajouter' onPress={onSubmit} />
+        <Button title='Créer' onPress={onSubmit} />
       </View>
       <FlatList 
         data={erreurs}
@@ -109,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormCreate;
+export default FormCreateAccount;

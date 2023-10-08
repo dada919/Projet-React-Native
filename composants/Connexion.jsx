@@ -12,7 +12,7 @@ function Connexion({ navigation }) {
   const [erreurs, setErreurs] = useState([]);
   const [gestionnaire, setGestionnaire] = useState("");
   const [loading, setLoading] = useState(true);
-  const { setIsLoggedIn, setAccountEmail, setAccountRole } = useAuth();
+  const { setIsLoggedIn, setAccountEmail, setAccountRole, setAccountId } = useAuth();
 
   useEffect(() => {
     const fetchGestionnaires = async () => {
@@ -55,6 +55,8 @@ function Connexion({ navigation }) {
       setIsLoggedIn(true);
       setAccountEmail(login);
       setAccountRole(user.role);
+      setAccountId(user.id);
+      console.log(user.id);
       navigation.navigate('dashboard')
     } else {
       alert("Mot de passe incorrect");

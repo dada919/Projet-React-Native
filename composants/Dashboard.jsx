@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Button, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, FlatList, TouchableOpacity } from 'react-native';
 import { useAuth } from '../context/authContext';
 import { useState, useEffect } from 'react';
 import { deleteDoc , doc , getDocs, collection } from "firebase/firestore"
@@ -9,6 +9,7 @@ const Dashboard = ({navigation}) => {
   const { accountEmail } = useAuth();
   const { accountRole } = useAuth();
   const { isLoggedIn } = useAuth();
+  const { accountId } = useAuth();
 
   const [produits, setProduits] = useState([]);
 
@@ -55,20 +56,76 @@ if (!isLoggedIn) {
             </View>
         </View>
       </View>
-      <FlatList 
-        data={produits}
-        renderItem={function({item}){
-        return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
-        <Button onPress={function(){
-          navigation.navigate("formupdate" , {id : item.id })
-        }} color="orange" title="modif"/>
-        <Button onPress={function(){  
-          supprimer(item.id)
-        }} color="red" title="supr"/>
-        <Text>nom: {item.nom} - âge: {item.description}</Text>
+
+      {accountRole === 'admin' && (
+      <View>
+        <View style={styles.ButtonCompte}>
+          <TouchableOpacity onPress={() => navigation.navigate('compte')} style={styles.Button}>
+            <Text style={styles.ButtonText}>Gérer les comptes</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.ButtonCompte}>
+          <TouchableOpacity onPress={() => navigation.navigate('formcreate')} style={styles.Button}>
+            <Text style={styles.ButtonText}>Ajouter un Produit</Text>
+          </TouchableOpacity>
+        </View>
+
+        <FlatList 
+          data={produits}
+          renderItem={function({item}){
+          return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center", padding: 10}}>
+          <View>
+            <Button onPress={function(){
+              navigation.navigate("formupdate" , {id : item.id })
+            }} color="orange" title="modif"/>
+            <Button onPress={function(){  
+              supprimer(item.id)
+            }} color="red" title="supr"/>
+          </View>
+          <Text style={{ padding: 10, width: 150}}>Nom: {item.nom}</Text>
+          <Image
+            style={styles.cardImage}
+            source={{ uri: item.image }}
+            resizeMode="cover"
+          />
+        </View>
+        }}
+        />
       </View>
-      }}
-      />
+      )}
+
+      {accountRole === 'redacteur' && (
+        <View>
+          <View style={styles.ButtonCompte}>
+            <TouchableOpacity onPress={() => navigation.navigate('formcreate')} style={styles.Button}>
+              <Text style={styles.ButtonText}>Ajouter un Produit</Text>
+            </TouchableOpacity>
+          </View>
+
+          <FlatList 
+          data={produits.filter(item => item.auteur === accountId)}
+          renderItem={function({item}){
+          return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
+          <View>
+            <Button onPress={function(){
+              navigation.navigate("formupdate" , {id : item.id })
+            }} color="orange" title="modif"/>
+            <Button onPress={function(){  
+              supprimer(item.id)
+            }} color="red" title="supr"/>
+          </View>
+          <Text style={{ padding: 10, width: 150}}>{item.nom}</Text>
+          <Image
+            style={styles.cardImage}
+            source={{ uri: item.image }}
+            resizeMode="cover"
+          />
+        </View>
+        }}
+        />
+        </View>
+      )}
   </View>
   );
 };
@@ -152,6 +209,29 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     fontSize: 20,
     color: "red",
+  },
+  ButtonCompte: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 18,
+  },
+  Button: {
+    backgroundColor: '#3f7ecc',
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: 'white',
+    alignItems: 'center',
+    width: '50%',
+    borderRadius: 20,
+  },
+  ButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  cardImage: {
+    width: '40%',
+    height: 100,
+    alignItems: "left",
   },
 });
 

@@ -1,10 +1,10 @@
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, ScrollView } from 'react-native';
 
-function Produit({route}) {
+function Single({route}) {
   const { produit } = route.params;
 
   return (
-        <>
+        <ScrollView>
           <View style={styles.catContainer}>
             <Image source={{ uri: produit.image }} style={styles.image}/>
             <View style={styles.descriptionContainer}>
@@ -15,7 +15,7 @@ function Produit({route}) {
               <Text style={styles.descriptionProduit}>Date de paruption: {produit.dt_creation}</Text>
             </View>
           </View>
-        </>
+        </ScrollView>
   );
 }
 
@@ -47,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Produit;
+export default Single;

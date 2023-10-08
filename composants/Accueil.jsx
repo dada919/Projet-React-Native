@@ -33,7 +33,7 @@ function Acceuil({navigation}) {
         data={produits}
         renderItem={function({item}){
         return <View style={styles.card}>
-        <TouchableOpacity onPress={() => navigation.navigate('produit', { produit: item  })}>
+        <TouchableOpacity onPress={() => navigation.navigate('single', { produit: item  })}>
           <Image
             style={styles.cardImage}
             source={{ uri: item.image }}
