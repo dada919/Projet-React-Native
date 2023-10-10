@@ -14,11 +14,11 @@ function FormCreateAccount({ navigation }) {
 
   const onSubmit = () => {
     
-      const etudiant = {nom, age, email}
-      const {error} = schemaEtudiant.validate (etudiant, {abortEarly : false});
+      const produit = {nom, age, email}
+      const {error} = schemaproduit.validate (produit, {abortEarly : false});
       console.log(error);
       if(!error) {
-        addDoc(collection(db, "etudiant"), etudiant).then(function(reponse){
+        addDoc(collection(db, "oeuvre"), produit).then(function(reponse){
             setNom("")
             setAge("")
             setEmail("")

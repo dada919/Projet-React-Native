@@ -87,6 +87,9 @@ function Connexion({ navigation }) {
           autoCapitalize="none"
           autoCorrect={false}
         />
+        <View style={styles.button}></View>
+        <Button title='Login' onPress={onSubmit} />
+        <View style={styles.button}></View>
         {erreurs.length > 0 && (
           <View>
             {erreurs.map((erreur, index) => (
@@ -96,8 +99,6 @@ function Connexion({ navigation }) {
             ))}
           </View>
         )}
-        <View style={styles.button}></View>
-        <Button title='Login' onPress={onSubmit} />
       </View>
     </View>
   );
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 350,
-    height: 400,
+    height: 382,
     backgroundColor: '#3f7ecc',
     padding: 20,
     borderRadius: 15,
@@ -136,6 +137,10 @@ const styles = StyleSheet.create({
   },
   button: {
     padding: 10,
+  },
+
+  errorText: {
+    color: "red",
   },
 });
 

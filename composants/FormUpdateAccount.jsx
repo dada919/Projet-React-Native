@@ -4,7 +4,7 @@ import { schemaEtudiant } from "../verif/connexion"
 import db from "../config"
 import {  getDoc, updateDoc , doc  } from "firebase/firestore"
 
-const FormUpdate =  ({navigation , route }) => {
+const FormUpdateAccount =  ({navigation , route }) => {
     const [id, setId]= useState("");
     const [nom, setNom]= useState("");
     const [age, setAge]= useState("0");
@@ -33,7 +33,7 @@ const FormUpdate =  ({navigation , route }) => {
             
             await updateDoc(doc(db, "etudiant" , id) , etudiant)
             // ici on va pouvoir effecter l'ajout
-            navigation.push('accueil') ; // retour à la page d'accueil ! 
+            navigation.push('dasboard') ; // retour à la page d'accueil ! 
              
         }else {
             const tableauErreurs = error.details.map(function(item){ return item.message });
@@ -60,10 +60,11 @@ const FormUpdate =  ({navigation , route }) => {
     </View>
   )
 }
-export default FormUpdate
 
 const styles = StyleSheet.create({
-    input : {
-        borderColor : "black" , padding : 10 , borderWidth : 2 , marginVertical : 10
-    }
+  input : {
+      borderColor : "black" , padding : 10 , borderWidth : 2 , marginVertical : 10
+  }
 })
+
+export default FormUpdateAccount

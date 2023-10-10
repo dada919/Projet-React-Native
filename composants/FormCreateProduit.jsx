@@ -1,27 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
-import { schemaEtudiant } from '../verif/connexion.js';
-import db from '../config';
+import { schemaProduit } from '../verif/produit.js';
+import { useAuth } from '../context/authContext.jsx';
+import db from '../config.js';
 import { collection, addDoc } from 'firebase/firestore';
 
 
-function FormCreate({ navigation }) {
+function FormCreateProduit({ navigation, route }) {
   const [nom, setNom] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
+
+  const { accountId } = useAuth();
+  const [auteur] = useState(accountId);
+
+  const currentDateISO = new Date().toISOString();
+  const dt_creation = currentDateISO.split('T')[0];
+
   const [erreurs, setErreurs] = useState([]);
 
+  const updateListHandler = route.params.updateListHandler;
 
   const onSubmit = () => {
     
-      const etudiant = {nom, age, email}
-      const {error} = schemaEtudiant.validate (etudiant, {abortEarly : false});
+      const produit = {nom, description, image, auteur, dt_creation}
+      const {error} = schemaProduit.validate (produit, {abortEarly : false});
       console.log(error);
       if(!error) {
-        addDoc(collection(db, "etudiant"), etudiant).then(function(reponse){
+        addDoc(collection(db, "oeuvre"), produit).then(function(reponse){
             setNom("")
             setDescription("")
             setImage("")
+            updateListHandler();
             alert("Le produit à bien été ajouté dans la base de données")
         })
       }
@@ -65,10 +75,15 @@ function FormCreate({ navigation }) {
         <View style={styles.button}></View>
         <Button title='Ajouter' onPress={onSubmit} />
       </View>
-      <FlatList 
-        data={erreurs}
-        renderItem={function({item}){return <Text>{item}</Text>}}
-      />
+      {erreurs.length > 0 && (
+          <View>
+            {erreurs.map((erreur, index) => (
+              <Text key={index} style={{ color: "red" }}>
+                {erreur}
+              </Text>
+            ))}
+          </View>
+        )}
     </View>
   );
 }
@@ -81,14 +96,14 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 350,
-    height: 565,
+    height: 550,
     backgroundColor: '#3f7ecc',
     padding: 20,
     borderRadius: 15,
   },
   title: {
     color: "white",
-    fontSize: 40,
+    fontSize: 35,
     textAlign: "center",
   },
   title2: {
@@ -109,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FormCreate;
+export default FormCreateProduit;

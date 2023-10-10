@@ -12,7 +12,7 @@ function Single({route}) {
                 <Text style={styles.titre}>{produit.nom}</Text>
               </View>
               <Text style={styles.descriptionProduit}>{produit.description}</Text>
-              <Text style={styles.descriptionProduit}>Date de paruption: {produit.dt_creation}</Text>
+              <Text style={styles.descriptionProduit}>Dernière modification: {produit.dt_creation}</Text>
             </View>
           </View>
         </ScrollView>

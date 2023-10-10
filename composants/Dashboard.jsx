@@ -10,8 +10,13 @@ const Dashboard = ({navigation}) => {
   const { accountRole } = useAuth();
   const { isLoggedIn } = useAuth();
   const { accountId } = useAuth();
+  const [updateList , setUpdateList] = useState(false);
 
   const [produits, setProduits] = useState([]);
+
+  const updateListHandler = () => {
+    setUpdateList(!updateList);
+  };
 
   useEffect( function(){ 
 
@@ -24,7 +29,13 @@ const Dashboard = ({navigation}) => {
       setProduits(data);
     })
 
-} , [])
+} , [updateList])
+
+const supprimer = (id) => {
+  deleteDoc(doc(db , "oeuvre" , id)).then(function(){
+      setUpdateList(!updateList);
+  });
+}
 
 if (!isLoggedIn) {
   return (
@@ -60,13 +71,13 @@ if (!isLoggedIn) {
       {accountRole === 'admin' && (
       <View>
         <View style={styles.ButtonCompte}>
-          <TouchableOpacity onPress={() => navigation.navigate('compte')} style={styles.Button}>
+          <TouchableOpacity onPress={() => ("compte")} style={styles.Button}>
             <Text style={styles.ButtonText}>Gérer les comptes</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.ButtonCompte}>
-          <TouchableOpacity onPress={() => navigation.navigate('formcreate')} style={styles.Button}>
+          <TouchableOpacity onPress={() => navigation.navigate('formcreateproduit', { updateListHandler })} style={styles.Button}>
             <Text style={styles.ButtonText}>Ajouter un Produit</Text>
           </TouchableOpacity>
         </View>
@@ -77,7 +88,7 @@ if (!isLoggedIn) {
           return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center", padding: 10}}>
           <View>
             <Button onPress={function(){
-              navigation.navigate("formupdate" , {id : item.id })
+              navigation.navigate("formupdateproduit" , {id : item.id, updateListHandler })
             }} color="orange" title="modif"/>
             <Button onPress={function(){  
               supprimer(item.id)
@@ -98,10 +109,10 @@ if (!isLoggedIn) {
       {accountRole === 'redacteur' && (
         <View>
           <View style={styles.ButtonCompte}>
-            <TouchableOpacity onPress={() => navigation.navigate('formcreate')} style={styles.Button}>
-              <Text style={styles.ButtonText}>Ajouter un Produit</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('formcreateproduit', { updateListHandler })} style={styles.Button}>
+            <Text style={styles.ButtonText}>Ajouter un Produit</Text>
+          </TouchableOpacity>
+        </View>
 
           <FlatList 
           data={produits.filter(item => item.auteur === accountId)}
@@ -109,7 +120,7 @@ if (!isLoggedIn) {
           return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
           <View>
             <Button onPress={function(){
-              navigation.navigate("formupdate" , {id : item.id })
+              navigation.navigate("formupdateproduit" , {id : item.id, updateListHandler })
             }} color="orange" title="modif"/>
             <Button onPress={function(){  
               supprimer(item.id)
@@ -231,7 +242,7 @@ const styles = StyleSheet.create({
   cardImage: {
     width: '40%',
     height: 100,
-    alignItems: "left",
+    borderRadius: 20,
   },
 });
 
