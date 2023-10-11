@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { useEffect } from 'react';
 import { schemaConnexion } from '../verif/connexion';
 import db from "../config"
-import { getDocs, collection } from "firebase/firestore"
+import { updateDoc, doc , getDocs, collection } from "firebase/firestore"
 import { useAuth } from '../context/authContext';
 import { useUpdate } from '../context/updateContext';
-
-function Connexion({ navigation }) {
-  const [login, setLogin] = useState("");
+function FormPassword({ navigation }) {
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [erreurs, setErreurs] = useState([]);
   const [gestionnaire, setGestionnaire] = useState("");
-  const { setIsLoggedIn, setAccountEmail, setAccountRole, setAccountId } = useAuth();
-  const { updateAccount, setUpdateAccount } = useUpdate();
+  const { isLoggedIn } = useAuth();
+  const { accountEmail } = useAuth();
+  const {setUpdateAccount} = useUpdate();
 
   useEffect(() => {
     const fetchGestionnaires = async () => {
@@ -22,14 +22,13 @@ function Connexion({ navigation }) {
       const data = snapShot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setGestionnaire(data);
     };
-    setUpdateAccount(false);
     fetchGestionnaires();
-  }, [updateAccount]);
+  }, []);
 
-  const onSubmit = () => {
-    const connexion = { email: login, password };
+  const onSubmit = async () => {
+    const connexion = { email: email, password };
     const { error } = schemaConnexion.validate(connexion, { abortEarly: false });
-
+  
     if (error) {
       const tableauErreurs = error.details.map(function (item) {
         return item.message;
@@ -37,42 +36,40 @@ function Connexion({ navigation }) {
       setErreurs(tableauErreurs);
       return;
     }
-
-    const isLoginValid = gestionnaire.some((gest) => gest.email === login);
-
-    if (!isLoginValid) {
-      alert("Email invalide");
+  
+    const gestionnaireTrouve = gestionnaire.find((gest) => gest.email === email);
+  
+    if (!gestionnaireTrouve) {
+      alert("Le compte n'existe pas");
       return;
     }
-
-    const user = gestionnaire.find((gest) => gest.email === login && gest.password === password);
-
-    if (user) {
-      setIsLoggedIn(true);
-      setAccountEmail(login);
-      setAccountRole(user.role);
-      setAccountId(user.id);
-      navigation.navigate('dashboard')
-    } else {
-      alert("Mot de passe incorrect");
-      setIsLoggedIn(false);
+  
+    const gestionnaireId = gestionnaireTrouve.id;
+  
+    try {
+      const gestionnaireDoc = doc(db, 'gestionnaire', gestionnaireId);
+      await updateDoc(gestionnaireDoc, { password: password });
+      setUpdateAccount(true);
+      alert('Mot de passe modifié avec succès');
+    } catch (error) {
+      alert('Une erreur est survenue lors de la mise à jour du mot de passe.');
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Connexion</Text>
+        <Text style={styles.title}>Mot de passe oublié</Text>
         <Text style={styles.title2}>Email:</Text>
         <TextInput
           style={styles.input}
-          value={login}
-          onChangeText={(text) => setLogin(text)}
-          placeholder="Login"
+          value={email}
+          onChangeText={(text) => setemail(text)}
+          placeholder={isLoggedIn === true ? accountEmail : "Email"}
           autoCapitalize="none"
           autoCorrect={false}
         />
-        <Text style={styles.title2}>Mot de passe:</Text>
+        <Text style={styles.title2}>Nouveau mot de passe:</Text>
         <TextInput
           style={styles.input}
           value={password}
@@ -83,9 +80,8 @@ function Connexion({ navigation }) {
           autoCorrect={false}
         />
         <View style={styles.button}></View>
-        <Button title='Login' onPress={onSubmit} />
-      </View>
-      <View style={styles.button}></View>
+        <Button title='Modifier le mot de passe' onPress={onSubmit} />
+        <View style={styles.button}></View>
         {erreurs.length > 0 && (
           <View>
             {erreurs.map((erreur, index) => (
@@ -95,6 +91,7 @@ function Connexion({ navigation }) {
             ))}
           </View>
         )}
+      </View>
     </View>
   );
 }
@@ -138,4 +135,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Connexion;
+export default FormPassword;

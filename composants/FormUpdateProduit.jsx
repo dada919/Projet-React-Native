@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View , Button , TextInput , FlatList } from 'react-native'
+import { StyleSheet, Text, View , Button , TextInput } from 'react-native'
 import React , {useState , useEffect} from 'react'
 import { schemaProduit } from "../verif/produit"
 import db from "../config"
-import {  getDoc, updateDoc , doc  } from "firebase/firestore"
+import { getDoc, updateDoc , doc } from "firebase/firestore"
+import { useUpdate } from '../context/updateContext';
 
 const FormUpdateProduit =  ({navigation , route }) => {
     const [id, setId]= useState("");
@@ -11,12 +12,13 @@ const FormUpdateProduit =  ({navigation , route }) => {
     const [image, setImage]= useState("");
     const [auteur, setAuteur]= useState("");
     const [erreurs, setErreurs]= useState([]);
+    const { setUpdateList } = useUpdate();
 
     const currentDateISO = new Date().toISOString();
     const dt_creation = currentDateISO.split('T')[0];
 
     
-    const updateListHandler = route.params.updateListHandler;
+    const UpdateListDashboardHandler = route.params.UpdateListDashboardHandler;
 
     useEffect(() => {
         const id = route.params.id;
@@ -36,7 +38,8 @@ const FormUpdateProduit =  ({navigation , route }) => {
         setErreurs([]);
         if (!error) {
             await updateDoc(doc(db, "oeuvre", id), produit);
-            updateListHandler();
+            UpdateListDashboardHandler();
+            setUpdateList(true);
             alert("Modification ajoutée dans la base de données");
         } else {
             const tableauErreurs = error.details.map(function (item) { return item.message });
@@ -61,8 +64,9 @@ const FormUpdateProduit =  ({navigation , route }) => {
                 navigation.goBack()
             }} title="retour" color="purple"/>
         </View>
-        <View style={styles.button}></View>
-        {erreurs.length > 0 && (
+      </View>
+      <View style={styles.button}></View>
+      {erreurs.length > 0 && (
           <View>
             {erreurs.map((erreur, index) => (
               <Text key={index} style={{ color: "red" }}>
@@ -71,7 +75,6 @@ const FormUpdateProduit =  ({navigation , route }) => {
             ))}
           </View>
         )}
-      </View>
     </View>
   )
 }
@@ -83,8 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: 350,
-    height: 585,
+    width: "95%",
     backgroundColor: '#3f7ecc',
     padding: 20,
     borderRadius: 15,

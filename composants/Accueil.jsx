@@ -2,22 +2,23 @@ import { Text, View, Button, StyleSheet, TouchableOpacity, ScrollView, TextInput
 import React, { useEffect, useState } from 'react';
 import db from "../config"
 import { deleteDoc , doc , getDocs, collection } from "firebase/firestore"
+import { useUpdate } from '../context/updateContext';
 
-function Acceuil({navigation}) {
+function Accueil({ navigation }) {
   const [produits, setProduits] = useState([]);
+  const { updateList, setUpdateList } = useUpdate();
 
-  useEffect( function(){ 
-
-    getDocs(collection(db, "oeuvre"))
-    .then(function(snapShot){
-      const data = [];
-      snapShot.docs.map(function(doc){
-        data.push({...doc.data() , id : doc.id})
-      })
-      setProduits(data);
-    })
-
-} , [])
+  useEffect(function () {
+    getDocs(collection(db, 'oeuvre'))
+      .then(function (snapShot) {
+        const data = [];
+        snapShot.docs.map(function (doc) {
+          data.push({ ...doc.data(), id: doc.id });
+        });
+        setProduits(data);
+        setUpdateList(false);
+      });
+  }, [updateList]);
 
   return (
     <>
@@ -100,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Acceuil;
+export default Accueil;

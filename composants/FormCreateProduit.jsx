@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { schemaProduit } from '../verif/produit.js';
 import { useAuth } from '../context/authContext.jsx';
 import db from '../config.js';
 import { collection, addDoc } from 'firebase/firestore';
+import { useUpdate } from '../context/updateContext';
 
 
 function FormCreateProduit({ navigation, route }) {
   const [nom, setNom] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
+  const { setUpdateList } = useUpdate();
 
   const { accountId } = useAuth();
   const [auteur] = useState(accountId);
@@ -19,7 +21,7 @@ function FormCreateProduit({ navigation, route }) {
 
   const [erreurs, setErreurs] = useState([]);
 
-  const updateListHandler = route.params.updateListHandler;
+  const UpdateListDashboardHandler = route.params.UpdateListDashboardHandler;
 
   const onSubmit = () => {
     
@@ -31,7 +33,8 @@ function FormCreateProduit({ navigation, route }) {
             setNom("")
             setDescription("")
             setImage("")
-            updateListHandler();
+            UpdateListDashboardHandler();
+            setUpdateList(true);
             alert("Le produit à bien été ajouté dans la base de données")
         })
       }
@@ -95,8 +98,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: 350,
-    height: 550,
+    width: "95%",
     backgroundColor: '#3f7ecc',
     padding: 20,
     borderRadius: 15,

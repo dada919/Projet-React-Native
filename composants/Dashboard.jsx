@@ -1,21 +1,23 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Button, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, Button, FlatList, ScrollView, TouchableOpacity } from 'react-native';
 import { useAuth } from '../context/authContext';
 import { useState, useEffect } from 'react';
 import { deleteDoc , doc , getDocs, collection } from "firebase/firestore"
 import db from "../config"
+import { useUpdate } from '../context/updateContext';
 
 const Dashboard = ({navigation}) => {
   const { accountEmail } = useAuth();
   const { accountRole } = useAuth();
   const { isLoggedIn } = useAuth();
   const { accountId } = useAuth();
-  const [updateList , setUpdateList] = useState(false);
+  const [UpdateListDashboard , setUpdateListDashboard] = useState(false);
+  const { setUpdateList } = useUpdate();
 
   const [produits, setProduits] = useState([]);
 
-  const updateListHandler = () => {
-    setUpdateList(!updateList);
+  const UpdateListDashboardHandler = () => {
+    setUpdateListDashboard(!UpdateListDashboard);
   };
 
   useEffect( function(){ 
@@ -29,11 +31,12 @@ const Dashboard = ({navigation}) => {
       setProduits(data);
     })
 
-} , [updateList])
+} , [UpdateListDashboard])
 
 const supprimer = (id) => {
   deleteDoc(doc(db , "oeuvre" , id)).then(function(){
-      setUpdateList(!updateList);
+      setUpdateListDashboard(!UpdateListDashboard);
+      setUpdateList(true);
   });
 }
 
@@ -52,10 +55,7 @@ if (!isLoggedIn) {
         <View style={styles.card}>
             <View style={styles.zoneGauche}>
             <View style={styles.zoneGaucheTop}>
-                <Image
-                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}
-                style={styles.profileImage}
-                />
+                
                 <View style={styles.zoneGaucheNom}>
                 <Text style={styles.h2}>{accountEmail}</Text>
                 <Text style={styles.h3}>Role: {accountRole}</Text>
@@ -63,7 +63,9 @@ if (!isLoggedIn) {
             </View>
             </View>
             <View style={styles.zoneDroite}>
-                <Text style={styles.h1}>...</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('formpassword')}>
+            <Text style={styles.h1}>...</Text>
+            </TouchableOpacity>
             </View>
         </View>
       </View>
@@ -71,70 +73,70 @@ if (!isLoggedIn) {
       {accountRole === 'admin' && (
       <View>
         <View style={styles.ButtonCompte}>
-          <TouchableOpacity onPress={() => ("compte")} style={styles.Button}>
+          <TouchableOpacity onPress={() => navigation.navigate('compte')} style={styles.Button}>
             <Text style={styles.ButtonText}>Gérer les comptes</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.ButtonCompte}>
-          <TouchableOpacity onPress={() => navigation.navigate('formcreateproduit', { updateListHandler })} style={styles.Button}>
+          <TouchableOpacity onPress={() => navigation.navigate('formcreateproduit', { UpdateListDashboardHandler })} style={styles.Button}>
             <Text style={styles.ButtonText}>Ajouter un Produit</Text>
           </TouchableOpacity>
         </View>
 
-        <FlatList 
-          data={produits}
-          renderItem={function({item}){
-          return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center", padding: 10}}>
-          <View>
-            <Button onPress={function(){
-              navigation.navigate("formupdateproduit" , {id : item.id, updateListHandler })
-            }} color="orange" title="modif"/>
-            <Button onPress={function(){  
-              supprimer(item.id)
-            }} color="red" title="supr"/>
+          <FlatList 
+            data={produits}
+            renderItem={function({item}){
+            return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center", padding: 10}}>
+            <View>
+              <Button onPress={function(){
+                navigation.navigate("formupdateproduit" , {id : item.id, UpdateListDashboardHandler })
+              }} color="orange" title="modif"/>
+              <Button onPress={function(){  
+                supprimer(item.id)
+              }} color="red" title="supr"/>
+            </View>
+            <Text style={{ padding: 10, width: 150}}>Nom: {item.nom}</Text>
+            <Image
+              style={styles.cardImage}
+              source={{ uri: item.image }}
+              resizeMode="cover"
+            />
           </View>
-          <Text style={{ padding: 10, width: 150}}>Nom: {item.nom}</Text>
-          <Image
-            style={styles.cardImage}
-            source={{ uri: item.image }}
-            resizeMode="cover"
+          }}
           />
-        </View>
-        }}
-        />
       </View>
       )}
 
       {accountRole === 'redacteur' && (
         <View>
           <View style={styles.ButtonCompte}>
-          <TouchableOpacity onPress={() => navigation.navigate('formcreateproduit', { updateListHandler })} style={styles.Button}>
-            <Text style={styles.ButtonText}>Ajouter un Produit</Text>
-          </TouchableOpacity>
-        </View>
-
-          <FlatList 
-          data={produits.filter(item => item.auteur === accountId)}
-          renderItem={function({item}){
-          return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
-          <View>
-            <Button onPress={function(){
-              navigation.navigate("formupdateproduit" , {id : item.id, updateListHandler })
-            }} color="orange" title="modif"/>
-            <Button onPress={function(){  
-              supprimer(item.id)
-            }} color="red" title="supr"/>
+            <TouchableOpacity onPress={() => navigation.navigate('formcreateproduit', { UpdateListDashboardHandler })} style={styles.Button}>
+              <Text style={styles.ButtonText}>Ajouter un Produit</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={{ padding: 10, width: 150}}>{item.nom}</Text>
-          <Image
-            style={styles.cardImage}
-            source={{ uri: item.image }}
-            resizeMode="cover"
-          />
-        </View>
-        }}
-        />
+
+            <FlatList 
+            data={produits.filter(item => item.auteur === accountId)}
+            renderItem={function({item}){
+            return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
+              <View>
+                <Button onPress={function(){
+                  navigation.navigate("formupdateproduit" , {id : item.id, UpdateListDashboardHandler })
+                }} color="orange" title="modif"/>
+                <Button onPress={function(){  
+                  supprimer(item.id)
+                }} color="red" title="supr"/>
+              </View>
+              <Text style={{ padding: 10, width: 150}}>{item.nom}</Text>
+              <Image
+                style={styles.cardImage}
+                source={{ uri: item.image }}
+                resizeMode="cover"
+              />
+            </View>
+            }}
+            />
         </View>
       )}
   </View>
