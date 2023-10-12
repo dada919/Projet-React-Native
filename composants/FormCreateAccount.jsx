@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
-import { schemaEtudiant } from '../verif/connexion.js';
+import { schemaAccount } from '../verif/account.js';
 import db from '../config';
 import { collection, addDoc } from 'firebase/firestore';
 
 
 function FormCreateAccount({ navigation }) {
-  const [nom, setNom] = useState("");
-  const [age, setAge] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const [erreurs, setErreurs] = useState([]);
 
 
   const onSubmit = () => {
     
-      const produit = {nom, age, email}
-      const {error} = schemaproduit.validate (produit, {abortEarly : false});
+      const produit = {email, password, role}
+      const {error} = schemaAccount.validate (produit, {abortEarly : false});
       console.log(error);
       if(!error) {
-        addDoc(collection(db, "oeuvre"), produit).then(function(reponse){
-            setNom("")
-            setAge("")
+        addDoc(collection(db, "gestionnaire"), produit).then(function(reponse){
             setEmail("")
+            setPassword("")
+            setRole("")
             alert("le profil à bien été crée dans la base de données")
         })
       }
@@ -35,30 +35,31 @@ function FormCreateAccount({ navigation }) {
     <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>Création d'un compte</Text>
-        <Text style={styles.title2}>Nom:</Text>
-        <TextInput
-          style={styles.input}
-          value={nom}
-          onChangeText={(text) => setNom(text)}
-          placeholder="Nom"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <Text style={styles.title2}>Age:</Text>
-        <TextInput
-          style={styles.input}
-          value={age}
-          onChangeText={(text) => setAge(text)}
-          placeholder="Age"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-         <Text style={styles.title2}>Email:</Text>
+        <Text style={styles.title2}>Email:</Text>
         <TextInput
           style={styles.input}
           value={email}
           onChangeText={(text) => setEmail(text)}
           placeholder="Email"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <Text style={styles.title2}>Mot de passe:</Text>
+        <TextInput
+          style={styles.input}
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+          placeholder="Mot de passe"
+          secureTextEntry
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+         <Text style={styles.title2}>Role:</Text>
+        <TextInput
+          style={styles.input}
+          value={role}
+          onChangeText={(text) => setRole(text)}
+          placeholder="Role"
           autoCapitalize="none"
           autoCorrect={false}
         />

@@ -55,7 +55,10 @@ if (!isLoggedIn) {
         <View style={styles.card}>
             <View style={styles.zoneGauche}>
             <View style={styles.zoneGaucheTop}>
-                
+            <Image
+                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}
+                style={styles.profileImage}
+                />
                 <View style={styles.zoneGaucheNom}>
                 <Text style={styles.h2}>{accountEmail}</Text>
                 <Text style={styles.h3}>Role: {accountRole}</Text>

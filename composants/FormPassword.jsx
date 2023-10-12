@@ -81,7 +81,8 @@ function FormPassword({ navigation }) {
         />
         <View style={styles.button}></View>
         <Button title='Modifier le mot de passe' onPress={onSubmit} />
-        <View style={styles.button}></View>
+      </View>
+      <View style={styles.button}></View>
         {erreurs.length > 0 && (
           <View>
             {erreurs.map((erreur, index) => (
@@ -91,7 +92,6 @@ function FormPassword({ navigation }) {
             ))}
           </View>
         )}
-      </View>
     </View>
   );
 }

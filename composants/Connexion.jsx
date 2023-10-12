@@ -95,6 +95,9 @@ function Connexion({ navigation }) {
             ))}
           </View>
         )}
+      <Button onPress={function(){
+                navigation.navigate("formpassword")
+            }} title="Mot de passe oublié ?" color="orange"/>
     </View>
   );
 }
