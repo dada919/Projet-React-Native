@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, Picker  } from 'react-native';
 import { schemaAccount } from '../verif/account.js';
 import db from '../config';
 import { collection, addDoc } from 'firebase/firestore';
 import { useUpdate } from '../context/updateContext';
 
 
-function FormCreateAccount({ navigation }) {
+function FormCreateAccount({ navigation, route }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [erreurs, setErreurs] = useState([]);
   const { setUpdateAccount } = useUpdate();
 
+  const UpdateAccountDashboardHandler = route.params.UpdateAccountDashboardHandler;
 
   const onSubmit = () => {
     
@@ -24,6 +25,7 @@ function FormCreateAccount({ navigation }) {
             setEmail("")
             setPassword("")
             setRole("")
+            UpdateAccountDashboardHandler();
             setUpdateAccount(true);
             alert("le profil à bien été crée dans la base de données")
         })
@@ -66,6 +68,15 @@ function FormCreateAccount({ navigation }) {
           autoCapitalize="none"
           autoCorrect={false}
         />
+
+        <Picker
+          style={styles.input}
+          selectedValue={role}
+          onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
+        >
+          <Picker.Item label="Redacteur" value="redacteur" />
+          <Picker.Item label="Admin" value="admin" />
+        </Picker>
         <View style={styles.button}></View>
         <Button title='Créer' onPress={onSubmit} />
       </View>

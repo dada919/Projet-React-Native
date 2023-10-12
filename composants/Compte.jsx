@@ -88,6 +88,7 @@ if (!isLoggedIn) {
 
           <FlatList 
             data={produits}
+            style={{ maxHeight: '70%' }}
             renderItem={function({item}){
             return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center", padding: 10}}>
             <View>
@@ -142,18 +143,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: 350,
-    height: 110,
+    width: "98%",
     backgroundColor: '#3f7ecc',
-    padding: 20,
+    padding: 16,
     borderRadius: 15,
     flexDirection: 'row',
     color: 'white',
     fontFamily: 'sans-serif',
   },
   cardFlatlist: {
-    width: 260,
-    height: 110,
+    width: 300,
     backgroundColor: '#3f7ecc',
     padding: 20,
     borderRadius: 15,
@@ -218,12 +217,7 @@ const styles = StyleSheet.create({
     fontSize: 35,
     color: "white",
     lineHeight: 25,
-    marginBottom: 15,
-  },
-  notLoggedInText: {
-    marginBottom: 30,
-    fontSize: 20,
-    color: "red",
+    marginTop: 20,
   },
   ButtonCompte: {
     alignItems: "center",

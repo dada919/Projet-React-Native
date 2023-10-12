@@ -89,6 +89,7 @@ if (!isLoggedIn) {
 
           <FlatList 
             data={produits}
+            style={{ maxHeight: '70%' }}
             renderItem={function({item}){
             return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center", padding: 10}}>
             <View>
@@ -121,8 +122,9 @@ if (!isLoggedIn) {
 
             <FlatList 
             data={produits.filter(item => item.auteur === accountId)}
+            style={{ maxHeight: '70%' }}
             renderItem={function({item}){
-            return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
+            return <View style={{ flex: 1, flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center"}}>
               <View>
                 <Button onPress={function(){
                   navigation.navigate("formupdateproduit" , {id : item.id, UpdateListDashboardHandler })
@@ -153,10 +155,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: 350,
-    height: 110,
+    width: "98%",
     backgroundColor: '#3f7ecc',
-    padding: 20,
+    padding: 16,
     borderRadius: 15,
     flexDirection: 'row',
     color: 'white',
@@ -194,32 +195,19 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     textAlign: 'center',
   },
-  number: {
-    fontSize: 16,
-    color: "white",
-    textAlign: "center",
-  },
-  text: {
-    fontSize: 10,
-    color: "white",
-  },
   zoneDroite: {
     flex: 1,
     alignItems: 'center',
   },
   zoneDroiteTop: {
     fontSize: 40,
-    lineHeight: 10,
-    marginBottom: 50,
-  },
-  zoneDroiteMiddle: {
-    flexDirection: 'column',
+    marginTop: 50,
   },
   h1: {
     fontSize: 35,
     color: "white",
     lineHeight: 25,
-    marginBottom: 15,
+    marginTop: 20,
   },
   notLoggedInText: {
     marginBottom: 30,
