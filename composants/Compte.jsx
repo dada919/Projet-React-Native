@@ -10,7 +10,6 @@ const Compte = ({navigation}) => {
   const { accountEmail } = useAuth();
   const { accountRole } = useAuth();
   const { isLoggedIn } = useAuth();
-  const { accountId } = useAuth();
   const [UpdateAccountDashboard , setUpdateAccountDashboard] = useState(false);
   const { setUpdateAccount } = useUpdate();
 
@@ -34,7 +33,7 @@ const Compte = ({navigation}) => {
 } , [UpdateAccountDashboard])
 
 const supprimer = (id) => {
-  deleteDoc(doc(db , "oeuvre" , id)).then(function(){
+  deleteDoc(doc(db , "gestionnaire" , id)).then(function(){
       setUpdateAccountDashboard(!UpdateAccountDashboard);
       setUpdateAccount(true);
   });
@@ -93,7 +92,7 @@ if (!isLoggedIn) {
             return <View style={{ flexDirection: "row", borderWidth: 1 , borderBlockColor: "black", padding: 5, alignItems:"center", padding: 10}}>
             <View>
               <Button onPress={function(){
-                navigation.navigate("formupdateproduit" , {id : item.id, UpdateAccountDashboardHandler })
+                navigation.navigate("formupdateaccount" , {id : item.id, UpdateAccountDashboardHandler })
               }} color="orange" title="modif"/>
               <Button onPress={function(){  
                 supprimer(item.id)

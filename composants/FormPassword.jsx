@@ -22,6 +22,9 @@ function FormPassword({ navigation }) {
       const data = snapShot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setGestionnaire(data);
     };
+    if (isLoggedIn) {
+      setemail(accountEmail);
+    }
     fetchGestionnaires();
   }, []);
 
@@ -65,7 +68,7 @@ function FormPassword({ navigation }) {
           style={styles.input}
           value={email}
           onChangeText={(text) => setemail(text)}
-          placeholder={isLoggedIn === true ? accountEmail : "Email"}
+          placeholder={"Email"}
           autoCapitalize="none"
           autoCorrect={false}
         />

@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-nativ
 import { schemaAccount } from '../verif/account.js';
 import db from '../config';
 import { collection, addDoc } from 'firebase/firestore';
+import { useUpdate } from '../context/updateContext';
 
 
 function FormCreateAccount({ navigation }) {
@@ -10,6 +11,7 @@ function FormCreateAccount({ navigation }) {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [erreurs, setErreurs] = useState([]);
+  const { setUpdateAccount } = useUpdate();
 
 
   const onSubmit = () => {
@@ -22,6 +24,7 @@ function FormCreateAccount({ navigation }) {
             setEmail("")
             setPassword("")
             setRole("")
+            setUpdateAccount(true);
             alert("le profil à bien été crée dans la base de données")
         })
       }

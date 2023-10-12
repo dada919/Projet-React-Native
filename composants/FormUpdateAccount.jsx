@@ -1,70 +1,111 @@
-import { StyleSheet, Text, View , Button , TextInput , FlatList } from 'react-native'
+import { StyleSheet, Text, View , Button , TextInput } from 'react-native'
 import React , {useState , useEffect} from 'react'
-import { schemaEtudiant } from "../verif/connexion"
+import { schemaAccount, schemaProduit } from "../verif/account"
 import db from "../config"
-import {  getDoc, updateDoc , doc  } from "firebase/firestore"
+import { getDoc, updateDoc , doc } from "firebase/firestore"
+import { useUpdate } from '../context/updateContext';
 
-const FormUpdateAccount =  ({navigation , route }) => {
+const FormUpdateProduit =  ({navigation , route }) => {
     const [id, setId]= useState("");
-    const [nom, setNom]= useState("");
-    const [age, setAge]= useState("0");
     const [email, setEmail]= useState("");
+    const [password, setPassword]= useState("");
+    const [role, setRole]= useState("");
     const [erreurs, setErreurs]= useState([]);
+    const { setUpdateAccount } = useUpdate();
+    
+    const UpdateAccountDashboardHandler = route.params.UpdateAccountDashboardHandler;
 
-    useEffect( function(){
+    useEffect(() => {
         const id = route.params.id;
         setId(id);
-        getDoc(doc(db , "etudiant", id)).then(function(snapShot){
-            const {email , nom , age} = snapShot.data()
-            setAge(age.toString());
+        getDoc(doc(db, "gestionnaire", id)).then(function (snapShot) {
+            const { email, password, role } = snapShot.data();
             setEmail(email);
-            setNom(nom); 
-        })
-    } , [])
-
+            setPassword(password);
+            setRole(role);
+        });
+    }, [route.params.id]);
 
     const handleSubmit = async () => {
-       
-        const etudiant = { nom , age , email }
-        const { error } = schemaEtudiant.validate( etudiant , {abortEarly : false}); 
-        // effectuer les 11 verifications 
+        const produit = { email, password, role };
+        const { error } = schemaAccount.validate(produit, { abortEarly: false });
         setErreurs([]);
-        if(!error){ // si erreur est undefined 
-            
-            await updateDoc(doc(db, "etudiant" , id) , etudiant)
-            // ici on va pouvoir effecter l'ajout
-            navigation.push('dasboard') ; // retour à la page d'accueil ! 
-             
-        }else {
-            const tableauErreurs = error.details.map(function(item){ return item.message });
+        if (!error) {
+            await updateDoc(doc(db, "gestionnaire", id), produit);
+            UpdateAccountDashboardHandler();
+            setUpdateAccount(true);
+            alert("Modification ajoutée dans la base de données");
+        } else {
+            const tableauErreurs = error.details.map(function (item) { return item.message });
             setErreurs(tableauErreurs);
         }
+    };
 
-    }
   return (
-    <View>
-      <Text>Modifier un profil etudiant</Text>
-      <TextInput placeholder="nom" onChangeText={function(text){ setNom(text) ; setErreurs([]);}} value={nom} style={styles.input} />
-      <TextInput placeholder="age" onChangeText={function(text){ setAge(text) ; setErreurs([]);}} value={age} style={styles.input} keyboardType="numeric"/>
-      <TextInput placeholder="email" onChangeText={function(text){ setEmail(text) ; setErreurs([]);}} value={email} style={styles.input}/>
-      <Button title="modifier" onPress={handleSubmit} color="orange" />
-      <FlatList 
-        data={erreurs}
-        renderItem={function({item}){ return <Text>{item}</Text> }}
-      />
-      <View style={{ marginTop : 10 }}>
-      <Button onPress={function(){
-            navigation.goBack()
-        }} title="retour à l'accueil" color="purple"/>
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <Text style={styles.title}>Modifier un compte</Text>
+        <Text style={styles.title2}>Email:</Text>
+        <TextInput style={styles.input} placeholder={email} onChangeText={function(text){ setEmail(text) ; setErreurs([]);}} value={email} />
+        <Text style={styles.title2}>Desciption:</Text>
+        <TextInput style={styles.input} placeholder={password} onChangeText={function(text){ setPassword(text) ; setErreurs([]);}} value={password}/>
+        <Text style={styles.title2}>Lien de l'image:</Text>
+        <TextInput style={styles.input} placeholder={role} onChangeText={function(text){ setRole(text) ; setErreurs([]);}} value={role}/>
+        <View style={styles.button}></View>
+        <Button title="modifier" onPress={handleSubmit} color="orange" />
+        <View style={{ marginTop : 10 }}>
+          <Button onPress={function(){
+                navigation.goBack()
+            }} title="retour" color="purple"/>
+        </View>
       </View>
+      <View style={styles.button}></View>
+      {erreurs.length > 0 && (
+          <View>
+            {erreurs.map((erreur, index) => (
+              <Text key={index} style={{ color: "red" }}>
+                {erreur}
+              </Text>
+            ))}
+          </View>
+        )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  input : {
-      borderColor : "black" , padding : 10 , borderWidth : 2 , marginVertical : 10
-  }
-})
+  container: {
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    width: "95%",
+    backgroundColor: '#3f7ecc',
+    padding: 20,
+    borderRadius: 15,
+  },
+  title: {
+    color: "white",
+    fontSize: 35,
+    textAlign: "center",
+  },
+  title2: {
+    marginBottom: 10,
+    marginTop: 30,
+    color: "white",
+    fontSize: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 10,
+    backgroundColor: "white",
+  },
+  button: {
+    padding: 10,
+  },
+});
 
-export default FormUpdateAccount
+export default FormUpdateProduit
