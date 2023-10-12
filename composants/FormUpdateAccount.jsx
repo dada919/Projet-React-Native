@@ -4,6 +4,7 @@ import { schemaAccount, schemaProduit } from "../verif/account"
 import db from "../config"
 import { getDoc, updateDoc , doc } from "firebase/firestore"
 import { useUpdate } from '../context/updateContext';
+import { Picker } from '@react-native-picker/picker';
 
 const FormUpdateProduit =  ({navigation , route }) => {
     const [id, setId]= useState("");
@@ -47,10 +48,17 @@ const FormUpdateProduit =  ({navigation , route }) => {
         <Text style={styles.title}>Modifier un compte</Text>
         <Text style={styles.title2}>Email:</Text>
         <TextInput style={styles.input} placeholder={email} onChangeText={function(text){ setEmail(text) ; setErreurs([]);}} value={email} />
-        <Text style={styles.title2}>Desciption:</Text>
+        <Text style={styles.title2}>Mot de passe:</Text>
         <TextInput style={styles.input} placeholder={password} onChangeText={function(text){ setPassword(text) ; setErreurs([]);}} value={password}/>
-        <Text style={styles.title2}>Lien de l'image:</Text>
-        <TextInput style={styles.input} placeholder={role} onChangeText={function(text){ setRole(text) ; setErreurs([]);}} value={role}/>
+        <Text style={styles.title2}>Role:</Text>
+        <Picker
+          selectedValue={role}
+          onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
+          style={styles.input}
+        >
+          <Picker.Item label="Redacteur" value="redacteur" />
+          <Picker.Item label="Admin" value="admin" />
+        </Picker>
         <View style={styles.button}></View>
         <Button title="modifier" onPress={handleSubmit} color="orange" />
         <View style={{ marginTop : 10 }}>

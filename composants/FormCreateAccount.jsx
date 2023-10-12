@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, Picker  } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
 import { schemaAccount } from '../verif/account.js';
 import db from '../config';
 import { collection, addDoc } from 'firebase/firestore';
 import { useUpdate } from '../context/updateContext';
+import { Picker } from '@react-native-picker/picker';
+
 
 
 function FormCreateAccount({ navigation, route }) {
@@ -59,24 +61,16 @@ function FormCreateAccount({ navigation, route }) {
           autoCapitalize="none"
           autoCorrect={false}
         />
-         <Text style={styles.title2}>Role:</Text>
-        <TextInput
-          style={styles.input}
-          value={role}
-          onChangeText={(text) => setRole(text)}
-          placeholder="Role"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-
+        <Text style={styles.title2}>Role:</Text>
         <Picker
-          style={styles.input}
           selectedValue={role}
           onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
+          style={styles.input}
         >
           <Picker.Item label="Redacteur" value="redacteur" />
           <Picker.Item label="Admin" value="admin" />
         </Picker>
+
         <View style={styles.button}></View>
         <Button title='Créer' onPress={onSubmit} />
       </View>
